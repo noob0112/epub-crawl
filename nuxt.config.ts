@@ -3,13 +3,20 @@ import Aura from "@primeuix/themes/aura";
 import tailwindcss from "@tailwindcss/vite";
 
 export default defineNuxtConfig({
+  app: {
+    baseURL: '/epub-crawl/'
+  },
+  nitro: {
+    prerender: {
+      crawlLinks: false,
+      failOnError: false,
+      routes: ["/404.html", "/200.html", "/"],
+    },
+  },
   imports: {
     autoImport: false,
   },
-  plugins: [
-    '@/plugins/tooltip',
-    '~/plugins/toastservice',
-  ],
+  plugins: ["@/plugins/tooltip", "~/plugins/toastservice"],
   vite: {
     plugins: [tailwindcss()],
   },
@@ -34,7 +41,7 @@ export default defineNuxtConfig({
         preset: Aura,
         options: {
           darkModeSelector: false,
-        }
+        },
       },
     },
   },
