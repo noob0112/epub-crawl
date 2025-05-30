@@ -1,0 +1,33 @@
+{
+  "name": "epub-crawl-app",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "nuxt build",
+    "dev": "nuxt dev",
+    "generate": "nuxt generate",
+    "preview": "nuxt preview",
+    "postinstall": "nuxt prepare"
+  },
+  "dependencies": {
+    "@nuxt/eslint": "1.4.1",
+    "@pinia/nuxt": "0.11.0",
+    "@primeuix/themes": "^1.1.1",
+    "@primevue/forms": "^4.3.4",
+    "@tailwindcss/vite": "^4.1.7",
+    "eslint": "^9.0.0",
+    "lucide-vue-next": "^0.511.0",
+    "nuxt": "^3.17.4",
+    "pinia": "^3.0.2",
+    "primevue": "^4.3.4",
+    "tailwindcss": "^4.1.7",
+    "tailwindcss-primeui": "^0.6.1",
+    "vue": "^3.5.14",
+    "vue-router": "^4.5.1"
+  },
+  "packageManager": "pnpm@9.14.3+sha512.c0f53ee99477ed969b82b289ad011a5d16bf1623c957e7f29eabe8d0c00b574c29b8c7f54f6c67ee710c73f285c8154d07ce44b46fe2c0eeb476a90441bac371",
+  "devDependencies": {
+    "@primevue/nuxt-module": "^4.3.4",
+    "@tailwindcss/typography": "^0.5.16"
+  }
+}
