@@ -26,27 +26,28 @@ const isShowFullDescription = ref(props.isShowFullDescription);
     }"
   >
     <div>
-      <img
-        :src="props.coverUrl"
-        alt="Ebook cover"
-        class="w-20"
-      />
+      <img :src="props.coverUrl" alt="Ebook cover" class="w-20" />
     </div>
     <div class="prose prose-sm flex flex-col flex-1 max-w-[unset]">
       <h3 class="text-center sm:text-start">{{ props.name }}</h3>
-      <div class="">
+      <div class="not-prose">
         <p
           class="transition duration-700 ease-in-out"
           :class="[isShowFullDescription ? 'line-clamp-none' : 'line-clamp-3']"
-        >
-          {{ props.description }}
-        </p>
+          v-html="props.description"
+        ></p>
       </div>
     </div>
     <div class="not-prose flex flex-col items-center gap-1">
       <Button v-if="!props.epubUrl" :loading="true" label="Crawling ..." />
-  
-      <Button v-else as="a" :href="epubUrl" download="moby-dick" class="not-prose">
+
+      <Button
+        v-else
+        as="a"
+        :href="epubUrl"
+        :download="props.name"
+        class="not-prose"
+      >
         <CloudDownload />
         Download
       </Button>

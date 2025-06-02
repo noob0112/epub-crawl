@@ -36,17 +36,9 @@ export const useEbookStore = defineStore("ebook", () => {
     }
   }
 
-  function crawlEpub(ebookId: string | number): EpubUrl {
-    const epubUrl = `https://s3.amazonaws.com/moby-dick/moby-dick.epub`;
-    // updateEpubUrl(ebookId, epubUrl)
-
-    return epubUrl;
-  }
-
   return {
     downloaderEbooks,
     addDownloaderEbook,
-    crawlEpub,
     updateEbook,
   };
 });

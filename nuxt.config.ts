@@ -6,6 +6,11 @@ export default defineNuxtConfig({
   app: {
     baseURL: '/epub-crawl/'
   },
+  runtimeConfig: {
+    public: {
+      crawlerEpubApiUrl: "https://epub-crawler-api.onrender.com",
+    },
+  },
   nitro: {
     prerender: {
       crawlLinks: false,

@@ -12,6 +12,8 @@ import DownloadedItem from "~/components/ui/ebook/downloaded-item.vue";
 import { useEbookStore, type Ebook } from "~/stores/ebook";
 import { useToast } from "primevue/usetoast";
 import { useFileSize } from "~/composables/useFileSize";
+import { useCrawlerEpubApi } from "~/apis/crawler-epub";
+import Hashids from "hashids";
 
 const toast = useToast();
 const ebookUrlInputId = "ebookUrl";
@@ -19,7 +21,9 @@ const isLoading = ref<boolean>(false);
 
 const ebookStore = useEbookStore();
 const { downloaderEbooks } = storeToRefs(ebookStore);
-const { addDownloaderEbook, crawlEpub, updateEbook } = ebookStore;
+const { addDownloaderEbook, updateEbook } = ebookStore;
+
+const { fetchEbook, fetchEpubUrl } = useCrawlerEpubApi();
 
 const initialValues = reactive({
   ebookUrl: "",
@@ -42,17 +46,23 @@ const resolver = ({ values }: any) => {
   };
 };
 
-async function getEpubUrl({ valid, reset }: any) {
+async function getEpubUrl(params: any) {
   isLoading.value = true;
+
+  const { values, valid, reset } = params;
 
   if (!valid) {
     isLoading.value = false;
     return;
   }
 
-  const ebookUrl = initialValues.ebookUrl.trim();
+  const ebookUrl = values.ebookUrl.trim();
 
-  const ebook = await fetchEbook(ebookUrl);
+  const ebookId = getWakaEbookIdFromUrl(ebookUrl);
+  const ebook = await fetchEbook(ebookId);
+
+  isLoading.value = false;
+
   if (!ebook) {
     toast.add({
       severity: "error",
@@ -60,7 +70,6 @@ async function getEpubUrl({ valid, reset }: any) {
       life: 3000,
     });
 
-    isLoading.value = false;
     return;
   }
 
@@ -69,7 +78,7 @@ async function getEpubUrl({ valid, reset }: any) {
   addDownloaderEbook(ebook);
 
   if (!ebook.epubUrl) {
-    const epubUrl = await crawlEpub(ebook.id);
+    const epubUrl = await fetchEpubUrl(ebook.id);
     ebook.epubUrl = epubUrl;
   }
 
@@ -86,34 +95,23 @@ async function getEpubUrl({ valid, reset }: any) {
     life: 3000,
   });
 
-  isLoading.value = false;
   return;
 }
-
-async function fetchEbook(ebookUrl: string): Promise<Ebook> {
-    return new Promise((resolve) => {
-      setTimeout(() => {
-        resolve({
-          id: 1,
-          name: "[Sách ngoại văn] The Brothers Karamazov",
-          coverUrl:
-            "https://307a0e78.vws.vegacdn.vn/view/v2/image/img.book/0/0/1/51712.jpg",
-          description: `The Brothers Karamazov là tiểu thuyết cuối cùng và được xem là đỉnh cao trong sự nghiệp của đại văn hào Nga Fyodor Dostoevsky. Tác phẩm được xuất bản lần đầu vào năm 1880, không chỉ nổi tiếng trong nước Nga mà còn được cả thế giới tôn vinh như một kiệt tác triết học – tâm lý học vượt thời gian.
-
-      Câu chuyện kể về gia đình nhà Karamazov với người cha – Fyodor Pavlovich Karamazov – đầy dục vọng, tham lam và vô đạo đức; cùng ba người con trai chính thức: Dmitri (nóng nảy, đầy cảm xúc), Ivan (trí tuệ, hoài nghi), và Alyosha (hiền hậu, hướng thiện), mỗi người đại diện cho một mặt khác nhau trong tâm hồn và triết lý sống của con người. Bên cạnh đó còn có Smerdyakov, người con ngoài giá thú, mang theo bóng tối và sự ngờ vực.
-
-      Cái chết của người cha dưới bàn tay bí ẩn đã đẩy các nhân vật vào cuộc khủng hoảng đạo đức, những câu hỏi về Chúa, tự do, cái ác, công lý và bản chất con người. Không chỉ là một câu chuyện tội ác – hình phạt, cuốn tiểu thuyết đi sâu vào những xung đột tâm linh, triết học và niềm tin, khiến người đọc không thể ngừng suy ngẫm.
-
-      Với chiều sâu tư tưởng, sự dày dạn trong phân tích tâm lý và ngôn ngữ nghệ thuật đặc trưng của văn học Nga, The Brothers Karamazov được coi là một trong những tiểu thuyết vĩ đại nhất trong lịch sử nhân loại.`,
-        });
-      }, 1000);
-    });
-  }
 
 function validateUrl(ebookUrl: string): boolean {
   const wakaEbookUrlRegex =
     /^(https?:\/\/)?(www\.)?waka\.vn\/ebook\/[a-zA-Z0-9-]+\.html$/;
   return wakaEbookUrlRegex.test(ebookUrl);
+}
+
+function getWakaEbookIdFromUrl(ebookUrl: string): number {
+  const hashids = new Hashids("Vegawaka");
+
+  const splitted = ebookUrl.split("-");
+  const lastPart = splitted[splitted.length - 1];
+  const key = lastPart.slice(1).replace("W.html", "");
+
+  return Number(hashids.decode(key).toString());
 }
 </script>
 
@@ -161,7 +159,7 @@ function validateUrl(ebookUrl: string): boolean {
             <div v-for="(item, index) in slotProps.items" :key="index">
               <DownloadedItem
                 :id="item.id"
-                :name="item.name"
+                :name="item.title"
                 :coverUrl="item.coverUrl"
                 :epubUrl="item.epubUrl"
                 :epubFileSize="item.epubFileSize"
