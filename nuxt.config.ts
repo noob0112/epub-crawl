@@ -4,11 +4,12 @@ import tailwindcss from "@tailwindcss/vite";
 
 export default defineNuxtConfig({
   app: {
-    baseURL: '/epub-crawl/'
+    baseURL: process.env.BASE_URL,
   },
   runtimeConfig: {
     public: {
-      crawlerEpubApiUrl: "https://epub-crawler-api.onrender.com",
+      crawlerEpubApiUrl:
+        process.env.EPU_CRAWL_API_URL || "http://localhost:5555/",
     },
   },
   nitro: {

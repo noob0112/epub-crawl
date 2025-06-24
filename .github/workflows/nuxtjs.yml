@@ -31,8 +31,17 @@ jobs:
     strategy:
       matrix:
         node-version: [20]
+
+    environment:
+      name: production
+
     steps:
       - uses: actions/checkout@v4
+
+      - name: Create .env file
+        run: |
+          echo "BASE_URL=${{ secrets.BASE_URL }}" >> .env
+          echo "EPU_CRAWL_API_URL=${{ secrets.EPU_CRAWL_API_URL }}" >> .env
 
       - name: Install pnpm
         uses: pnpm/action-setup@v4
@@ -41,7 +50,7 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: ${{ matrix.node-version }}
-          cache: 'pnpm'
+          cache: "pnpm"
 
       # - name: Setup Pages
       #   uses: actions/configure-pages@v5
