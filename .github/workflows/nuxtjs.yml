@@ -61,15 +61,25 @@ jobs:
       #     # You may remove this line if you want to manage the configuration yourself.
       #     static_site_generator: nuxt
 
-      # - name: Restore cache
-      #   uses: actions/cache@v4
-      #   with:
-      #     path: |
-      #       dist
-      #       .nuxt
-      #     key: ${{ runner.os }}-nuxt-build-${{ hashFiles('dist') }}
-      #     restore-keys: |
-      #       ${{ runner.os }}-nuxt-build-
+      - name: Cache node_modules
+        uses: actions/cache@v4
+        with:
+          path: |
+            node_modules
+          key: ${{ runner.os }}-node_modules-${{ hashFiles('package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-node_modules-
+
+      - name: Restore cache
+        uses: actions/cache@v4
+        with:
+          path: |
+            dist
+            .nuxt
+            .output
+          key: ${{ runner.os }}-nuxt-build-${{ hashFiles('dist') }}
+          restore-keys: |
+            ${{ runner.os }}-nuxt-build-
 
       - name: Install dependencies
         run: pnpm install
