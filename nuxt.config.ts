@@ -2,14 +2,19 @@
 import Aura from "@primeuix/themes/aura";
 import tailwindcss from "@tailwindcss/vite";
 
+const config = {
+  baseURL: process.env.BASE_URL || "/",
+  crawlerEpubApiUrl: process.env.EPU_CRAWL_API_URL || "http://localhost:5555/",
+};
+
 export default defineNuxtConfig({
+  srcDir: "src",
   app: {
-    baseURL: process.env.BASE_URL,
+    baseURL: config.baseURL,
   },
   runtimeConfig: {
     public: {
-      crawlerEpubApiUrl:
-        process.env.EPU_CRAWL_API_URL || "http://localhost:5555/",
+      crawlerEpubApiUrl: config.crawlerEpubApiUrl,
     },
   },
   nitro: {
